@@ -25,7 +25,7 @@ const SignUp = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/user/', data);
+            const response = await axios.post('http://localhost:3000/auth/register', data);
             console.log(response);
 
             if (response.status === 200) {

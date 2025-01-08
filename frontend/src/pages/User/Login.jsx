@@ -22,7 +22,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/', data);
+            const response = await axios.post('http://localhost:3000/auth/login', data);
 
             if (response.status === 200) {
                 toast.success('Login Successful!!');

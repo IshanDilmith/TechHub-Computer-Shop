@@ -9,7 +9,7 @@ import SignUp from "../pages/User/signUp";
 import LogIn from "../pages/User/Login";
 import HomePage from "../pages/Components/Home";
 import UpdateCategory from "../pages/Admin/UpdateCategory";
-
+import ProtectedRoute from "../ProtectedRoute";
 
 function AppRoutes() {
     return (
@@ -17,7 +17,7 @@ function AppRoutes() {
             <Routes>
 
                 <Route path="/Items" element={<AllItems />} />
-                <Route path="/AddItem" element={<AddItem />} />
+                <Route path="/AddItem" element={<ProtectedRoute adminOnly> <AddItem /> </ProtectedRoute>} />
                 <Route path="/UpdateItem/:id" element={<UpdateItem />} />
 
                 <Route path="/AddCategory" element={<ItemCategory />} />
@@ -28,8 +28,6 @@ function AppRoutes() {
                 <Route path="/login" element={<LogIn />} />
 
                 <Route path="/" element={<HomePage />} />
-
-
 
             </Routes>
         </Router>

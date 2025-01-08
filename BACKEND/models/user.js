@@ -20,16 +20,16 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    role: {
+        type: String,
+        default: 'user',
+        required: true
+    },
     password: {
         type: String,
         required: true
     }
 });
-
-userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({_id: this._id}, process.env.JWT_SECRET, {expiresIn: '1h'}); 
-    return token;
-};
 
 const validate = (data) => {
     const schema = Joi.object({
