@@ -9,7 +9,6 @@ const app = express();
 require('dotenv').config();
 app.use(CookieParser());
 
-
 router.post('/register', async (req, res) => {
     try {
         const { error } = validate(req.body);
@@ -82,29 +81,23 @@ const logvalidate = (data) => {
 }
 
 const generateAuthToken = (user, res) => {
+    
     const token = jwt.sign(
         {
             id: user._id,
             role: user.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '1h' },
     );
 
-    res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-    }).status(200).json({
-        user: {
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-        },
-        token,
-        message: 'Operation Successful!',
-    });
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+       .json({ 
+           user : user,
+           token : token,
+       });
+
+       
 };
 
 

@@ -9,7 +9,7 @@ import SignUp from "../pages/User/signUp";
 import LogIn from "../pages/User/Login";
 import HomePage from "../pages/Components/Home";
 import UpdateCategory from "../pages/Admin/UpdateCategory";
-import ProtectedRoute from "../ProtectedRoute";
+import ProtectedRoute from "../pages/Components/ProtectedRoute";
 
 function AppRoutes() {
     return (

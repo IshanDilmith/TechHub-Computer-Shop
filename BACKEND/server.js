@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 require('dotenv').config();
 const path = require('path');
-
+const cookieParser = require('cookie-parser');
 
 const PORT = process.env.PORT || 3000;
 
@@ -13,14 +13,14 @@ const app = express();
 
 app.use(cors({
     origin: 'http://localhost:5173',
-    credentials: true
+    credentials: true,
   }));
 
-app.use(express.json());
-app.use(bodyParser.json());
 
-const cookieParser = require('cookie-parser');
+app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const pcItemRouter = require('./routes/pcItems');
 app.use('/PCItemImages', express.static(path.join(__dirname, 'PCItemImages')));
@@ -33,7 +33,7 @@ const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
 const userProfile = require('./routes/userRoute');
-app.use('/userProfile', userProfile);
+app.use('/user', userProfile);
 
 const URL = process.env.MONGODB_URL;
 

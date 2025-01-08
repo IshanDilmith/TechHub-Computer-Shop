@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
             return;
         }
 
-        if (adminOnly && !isAdmin) {
+        if (adminOnly && !isAdmin()) {
             toast.error('You are not authorized to access this page');
             navigate('/');
         }

@@ -1,5 +1,5 @@
 import AppRoutes from './routes/Approutes';
-import UserContextProvider from './UserContext';
+import UserContextProvider from './pages/Components/UserContext';
 
 function App() {
   return (

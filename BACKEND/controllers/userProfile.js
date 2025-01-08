@@ -12,6 +12,7 @@ exports.getUserProfile =  async (req, res) => {
         }
 
         const userProfile = {
+            userId: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             role: user.role,

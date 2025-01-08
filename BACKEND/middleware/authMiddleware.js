@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware to check if the user is authenticated - Dinitha
 const authMiddleware = (req, res, next) => {
-    const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
-    console.log("Token:", token);
+
+    console.log('Token:', req.cookies.token);
+    
+    const token = req.cookies.token; 
 
     if (!token) {
-        return res.status(401).json({ message: 'Unauthorized access. Token is missing or invalid.' });
+        return res.status(401).json({ message: 'No token provided' });
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {

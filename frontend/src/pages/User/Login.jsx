@@ -24,11 +24,20 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:3000/auth/login', data);
 
+            const tokenData = await response.data;
+
+            if (tokenData.token) {
+                console.log("Token received:", tokenData.token);
+                
+                // Store the token in localStorage
+                localStorage.setItem('token', tokenData.token);
+              } else {
+                console.log("Token is undefined or empty in the response data");
+              }
+
             if (response.status === 200) {
                 toast.success('Login Successful!!');
             }
-
-            localStorage.setItem('token', response.data.data);
 
             setTimeout(() => {
                 window.location = '/'; 

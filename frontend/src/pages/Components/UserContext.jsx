@@ -11,7 +11,7 @@ const UserContextProvider = ({ children }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const { data } = await axios.get('http://localhost:3000/userProfile/Profile', {
+                const { data } = await axios.get('http://localhost:3000/user/Profile', {
                     withCredentials: true,
                 });
                 setUser(data);
