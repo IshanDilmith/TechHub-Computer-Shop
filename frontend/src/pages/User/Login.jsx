@@ -22,18 +22,16 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/auth/login', {
-                method: 'POST',
+            const response = await axios.post('http://localhost:3000/auth/login', data, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                credentials: 'include',
-                body: JSON.stringify(data)
+                withCredentials: true,
             });
 
-            const tokenData = await response.json();
+            if (response.status === 200) {
+                const tokenData = await response.data;
 
-            if (response.ok) {
                 if (tokenData.token) {
                     console.log("Token received:", tokenData.token);
 

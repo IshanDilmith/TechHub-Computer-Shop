@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext();
 
-export function UserContextProvider ({ children }) {
+const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
