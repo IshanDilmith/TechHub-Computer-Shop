@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext();
 
-const UserContextProvider = ({ children }) => {
+export function UserContextProvider ({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const UserContextProvider = ({ children }) => {
             try {
                 const { data } = await axios.get('http://localhost:3000/user/Profile', {
                     withCredentials: true,
-                });
+                });                
                 setUser(data);
                 setError(null);
             } catch (error) {

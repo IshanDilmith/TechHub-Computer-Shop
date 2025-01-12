@@ -25,8 +25,19 @@ const SignUp = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/register', data);
-            console.log(response);
+            const response = await axios.post('http://localhost:3000/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const responseData = await response.json();
+
+            if(!response.ok) {
+                throw new Error(responseData.message);
+            }
 
             if (response.status === 200) {
                 toast.success('User Registered Successfully!!');

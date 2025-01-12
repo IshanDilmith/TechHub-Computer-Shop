@@ -22,36 +22,45 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/login', data);
+            const response = await fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            });
 
-            const tokenData = await response.data;
+            const tokenData = await response.json();
 
-            if (tokenData.token) {
-                console.log("Token received:", tokenData.token);
-                
-                // Store the token in localStorage
-                localStorage.setItem('token', tokenData.token);
-              } else {
-                console.log("Token is undefined or empty in the response data");
-              }
+            if (response.ok) {
+                if (tokenData.token) {
+                    console.log("Token received:", tokenData.token);
 
-            if (response.status === 200) {
-                toast.success('Login Successful!!');
+                    localStorage.setItem('token', tokenData.token);
+
+                    toast.success('Login Successful!!');
+
+                    setTimeout(() => {
+                        window.location = '/';
+                    }, 1500);
+                } else {
+                    throw new Error('Login successful but no token received');
+                }
+            } else {
+                throw new Error(tokenData.message || 'Login failed');
             }
 
-            setTimeout(() => {
-                window.location = '/'; 
-            }, 1500);
-            
-            console.log(response);
-
         } catch (err) {
-            if (err.response &&
-                err.response.status >= 400 &&
-                err.response.status < 500) {
-                setError(err.response.data.message);
-            }   
+            console.error(err);
+            if (err.response) {
+                setError(err.response.data.message || 'Server returned an error');
+            } else {
+                setError('Network error or server is unreachable');
+            }
         }
+        
+        
     }
 
 
@@ -65,6 +74,7 @@ const Login = () => {
                     <div className="form-group">
                         <label>Email address</label>
                         <input type="email" className="form-control" 
+                        id='email'
                         placeholder='Email'
                         name='email'
                         onChange={handleChange} 
@@ -75,6 +85,7 @@ const Login = () => {
                     <div className="form-group">
                         <label>Password</label>
                         <input type="password" className="form-control" 
+                        id='password'
                         placeholder='Password' 
                         name='password'
                         onChange={handleChange}

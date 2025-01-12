@@ -17,7 +17,7 @@ function AppRoutes() {
             <Routes>
 
                 <Route path="/Items" element={<AllItems />} />
-                <Route path="/AddItem" element={<ProtectedRoute adminOnly> <AddItem /> </ProtectedRoute>} />
+                <Route path="/AddItem" element={<AddItem /> } />
                 <Route path="/UpdateItem/:id" element={<UpdateItem />} />
 
                 <Route path="/AddCategory" element={<ItemCategory />} />

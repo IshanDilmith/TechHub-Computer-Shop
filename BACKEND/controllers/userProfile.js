@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const { User } = require('../models/user');
 require('dotenv').config();
 
 exports.getUserProfile =  async (req, res) => {
@@ -25,4 +25,5 @@ exports.getUserProfile =  async (req, res) => {
         console.error(err);
         res.status(500).send({ message: "Server Error", error: err.message });
     }
+    
 };

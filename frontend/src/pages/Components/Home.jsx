@@ -5,9 +5,20 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        window.location.reload();
+    const handleLogout = async () => {
+        try{
+            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    
+            await axios.post('http://localhost:3000/auth/logout', {}, {
+                withCredentials: true,
+            });
+            
+            window.location = '/';
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to logout');
+        }
     }
 
     const [isTokenAvailable, setIsTokenAvailable] = useState(false);
@@ -28,7 +39,7 @@ const HomePage = () => {
                         Logout
                     </button>
                 )}
-                {!isTokenAvailable && (
+                 {!isTokenAvailable && (
                     <button className="btn btn-primary">
                     <Link to="/signUp" className="btn btn-primary">
                         SignUp

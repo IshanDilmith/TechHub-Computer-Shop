@@ -9,6 +9,8 @@ const app = express();
 require('dotenv').config();
 app.use(CookieParser());
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 router.post('/register', async (req, res) => {
     try {
         const { error } = validate(req.body);
@@ -91,14 +93,20 @@ const generateAuthToken = (user, res) => {
         { expiresIn: '1h' },
     );
 
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
-       .json({ 
-           user : user,
-           token : token,
-       });
-
+    res.cookie('token', token, { 
+        httpOnly: true, 
+        secure: false, 
+    }).json({ 
+        user,
+        token,
+    });
        
 };
+
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out successfully' });
+});
 
 
 module.exports = router;
