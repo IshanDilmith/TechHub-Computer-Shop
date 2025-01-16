@@ -1,12 +1,14 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useReducer } from "react";
+import cartReducer from "../Components/CartReducer";
 
 export const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error] = useState(null);
+    const [cart, dispatch] = useReducer(cartReducer,[]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -15,11 +17,11 @@ const UserContextProvider = ({ children }) => {
                     withCredentials: true,
                 });                
                 setUser(data);
-                setError(null);
+                const savedCart = JSON.parse(sessionStorage.getItem(`cart_${data._id}`)) || [];
+                dispatch({ type: 'LoadCart', payload: savedCart });
             } catch (error) {
                 console.error("Failed to fetch user:", error);
                 setUser(null);
-                setError(error.response?.data?.message || 'Failed to fetch user data');
             } finally {
                 setLoading(false);
             }
@@ -31,7 +33,7 @@ const UserContextProvider = ({ children }) => {
     const isAdmin = () => user?.role === 'admin';
     
     return (
-        <UserContext.Provider value={{ user, setUser, loading, error, isAdmin }}>
+        <UserContext.Provider value={{ user, setUser, loading, error, isAdmin, cart, dispatch }}>
             {children}
         </UserContext.Provider>
     );

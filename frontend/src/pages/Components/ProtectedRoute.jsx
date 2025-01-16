@@ -14,10 +14,10 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
         if (error) {
             toast.error('Failed to fetch user data');
-            return;
         }
 
         if (!user) {
+            toast.error('You must be logged in to access this page');
             navigate('/login');
             return;
         }
@@ -26,7 +26,8 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
             toast.error('You are not authorized to access this page');
             navigate('/');
         }
-    }, [user, loading, error, navigate, isAdmin, adminOnly]);
+
+    }, [loading, user, error, isAdmin, adminOnly, navigate]);
 
     if (loading) {
         return <div>Loading...</div>;

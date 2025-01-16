@@ -27,6 +27,10 @@ const pcItemsSchema = new Schema({
         type : Number,
         required: true,
         min : 0
+    },
+    cartUsage: {
+        type : Number,
+        default: 1
     }
 });
 

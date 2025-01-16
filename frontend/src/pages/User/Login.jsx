@@ -3,7 +3,7 @@ import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
-    
+
     const [data, setData] = useState({
         email: '',
         password: ''
@@ -39,9 +39,15 @@ const Login = () => {
 
                     toast.success('Login Successful!!');
 
-                    setTimeout(() => {
-                        window.location = '/';
-                    }, 1500);
+                    if (tokenData.user.role === 'admin') {
+                        setTimeout(() => {
+                            window.location = '/dashboard';
+                        }, 1500);
+                    } else {
+                        setTimeout(() => {
+                            window.location = '/';
+                        }, 1500);
+                    }
                 } else {
                     throw new Error('Login successful but no token received');
                 }
