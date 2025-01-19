@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const pcItemsSchema = new Schema({
     itemName: {
         type : String,
-        required: true
+        required: true,
+        unique: true
     },
     itemPrice: {
         type : Number,

@@ -18,13 +18,7 @@ const AllItems = () => {
     useEffect(() => {
         fetchItems();
 
-        const interval = setInterval(() => {
-            fetchItems();
-        }, 100);
-
-        return () => 
-            clearInterval(interval);
-    }, []);
+    }, [items]);
 
     const deleteItem = async (id) => {
         const confirm = window.confirm('Are you sure you want to delete this item?');

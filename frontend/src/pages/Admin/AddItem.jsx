@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import './sweetaler.css';
 
 const AddItem = () => {
 
@@ -41,12 +44,20 @@ const AddItem = () => {
 
         axios.post('http://localhost:3000/pcItems/AddItem', formData)
             .then(() => {
-                toast.success('Item Added Successfully!!');
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Item Added Successfully!!",
+                    showConfirmButton: false,
+                    timer: 5000
+                  });
 
             })
             .catch(err => {
                 if(err.response.status === 500){
                     toast.error('Server Error');
+                } else if (err.response.status === 400) {
+                    toast.error('Item name already exists!');
                 } else {
                     toast.error('Failed to add Item try again!!');
                 }
@@ -63,23 +74,23 @@ const AddItem = () => {
                     <div className="form-group">
                         <label>Item Name</label>
                         <input type="text" className="form-control" 
-                        onChange={(e) => setItemName(e.target.value)} />
+                        onChange={(e) => setItemName(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Price</label>
                         <input type="number" className="form-control" 
-                        onChange={(e) => setItemPrice(e.target.value)} />
+                        onChange={(e) => setItemPrice(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Description</label>
                         <input type="text" className="form-control" 
-                        onChange={(e) => setItemDescription(e.target.value)} />
+                        onChange={(e) => setItemDescription(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Category</label>
                         <select className="form-control"
                             value={selectedCategory}
-                            onChange={handleCategoryChange}>
+                            onChange={handleCategoryChange} required>
                             <option value="">Select Category</option>
                             {itemCategory.map((category) => (
                                 <option key={category._id} value={category.categoryName}>
@@ -91,12 +102,12 @@ const AddItem = () => {
                     <div className="form-group">
                         <label>Item Stock</label>
                         <input type="number" className="form-control" 
-                        onChange={(e) => setItemStock(e.target.value)} />
+                        onChange={(e) => setItemStock(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Image</label>
                         <input type="file" className="form-control" 
-                        onChange={(e) => setItemImage(e.target.files[0])} />
+                        onChange={(e) => setItemImage(e.target.files[0])} required/>
                     </div>
                     <button type="submit" className="btn btn-primary">Add Item</button>
                 </form>

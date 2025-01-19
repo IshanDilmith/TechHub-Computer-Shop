@@ -6,6 +6,7 @@ import { UserContext } from '../../pages/Components/UserContext';
 
 const SellingItems = () => {
     const { dispatch } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const [items, setItems] = useState([]);
 
@@ -41,8 +42,8 @@ const SellingItems = () => {
                             <th>Image</th>
                             <th>Item Price</th>
                             <th>Item Description</th>
-                            <th>Item Category</th>
                             <th>Item Stock</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,9 +57,12 @@ const SellingItems = () => {
                                 <td>
                                     <button className="btn btn-primary"
                                         onClick={() => {
+                                            console.log("User object:", user);
+                                            console.log("User ID:", user?.userId);
                                             dispatch({
                                                 type: 'Add',
-                                                item: item
+                                                item: { ...item, cartUsage: 1 },
+                                                userId: user?.userId,
                                             });
                                         }}
                                     >

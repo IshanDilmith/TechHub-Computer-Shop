@@ -43,6 +43,9 @@ const addItem = router.post('/AddItem',upload, async (req, res) => {
         await newItem.save();
         res.status(200).send(newItem);
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(400).json({ message: 'Item name must be unique.' });
+        }
         console.error(err);
         res.status(500).send({ message: "Server Error", error: err.message });
     }

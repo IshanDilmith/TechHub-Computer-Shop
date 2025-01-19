@@ -15,10 +15,8 @@ const UserContextProvider = ({ children }) => {
             try {
                 const { data } = await axios.get('http://localhost:3000/user/Profile', {
                     withCredentials: true,
-                });                
+                });
                 setUser(data);
-                const savedCart = JSON.parse(sessionStorage.getItem(`cart_${data._id}`)) || [];
-                dispatch({ type: 'LoadCart', payload: savedCart });
             } catch (error) {
                 console.error("Failed to fetch user:", error);
                 setUser(null);
@@ -29,6 +27,17 @@ const UserContextProvider = ({ children }) => {
 
         fetchUser();
     }, []);
+
+    useEffect(() => {
+        if (user?.userId) {
+            const userId = user.userId;
+            const storedCart = sessionStorage.getItem(`cart_${userId}`);
+            
+            if (storedCart) {
+                dispatch({ type: 'Init', payload: JSON.parse(storedCart) });
+            }
+        }
+    }, [user]);
 
     const isAdmin = () => user?.role === 'admin';
     

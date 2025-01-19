@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { UserContext } from './UserContext';
-import { useNavigate } from 'react-router-dom';
+import { replace, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
             navigate('/');
         }
 
-    }, [loading, user, error, isAdmin, adminOnly, navigate]);
+    }, [loading, user, error, adminOnly, navigate]);
 
     if (loading) {
         return <div>Loading...</div>;

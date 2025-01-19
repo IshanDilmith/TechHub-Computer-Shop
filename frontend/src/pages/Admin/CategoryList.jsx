@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from 'react-router-dom';
+import UpdateCategory from './UpdateCategory';
 
 const CategoryList = () => {
     const [category, setCategory] = useState([]);
@@ -18,12 +19,6 @@ const CategoryList = () => {
     useEffect(() => {
         fetchCategory();
 
-        const interval = setInterval(() => {
-            fetchCategory();
-        }, 100);
-
-        return () =>
-            clearInterval(interval);
     }, []);
 
     const deleteCategory = async (id) => {
@@ -61,12 +56,14 @@ const CategoryList = () => {
                             <tr key={cat._id}>
                                 <td>{cat.categoryName}</td>
                                 <td>
-                                    <button className="btn btn-danger" onClick={() => deleteCategory(cat._id)}>Delete</button>
+                                    <UpdateCategory
+                                        categoryId={cat._id}
+                                        currentName={cat.categoryName}
+                                        onUpdate={fetchCategory}
+                                    />
                                 </td>
                                 <td>
-                                    <Link to={`/UpdateCategory/${cat._id}`}>
-                                        <button className="btn btn-danger" >Update</button>
-                                    </Link>
+                                    <button className="btn btn-danger" onClick={() => deleteCategory(cat._id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
