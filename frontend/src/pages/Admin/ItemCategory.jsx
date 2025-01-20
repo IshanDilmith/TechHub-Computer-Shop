@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const ItemCategory = () => {
     
@@ -11,8 +13,13 @@ const ItemCategory = () => {
 
         axios.post('http://localhost:3000/itemCategory/AddItemCategory', { categoryName })
             .then(() => {
-                toast.success('Category Added Successfully!!');
-
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Category Added Successfully!!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             })
             .catch(err => {
                 if(err.response.status === 500){

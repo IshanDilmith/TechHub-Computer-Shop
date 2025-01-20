@@ -11,6 +11,7 @@ import HomePage from "../pages/Components/Home";
 import UpdateCategory from "../pages/Admin/UpdateCategory";
 import ProtectedRoute from "../pages/Components/ProtectedRoute";
 import Cart from "../pages/SellingItems/Cart";
+import ContactUs from "../pages/ContactUs/ContactUs";
 
 function AppRoutes() {
     return (
@@ -30,6 +31,8 @@ function AppRoutes() {
 
                 <Route path="/" element={<HomePage />} />
                 <Route path="/cart" element={<Cart />} />
+
+                <Route path="/contactUs" element={<ContactUs />} />
 
 
             </Routes>

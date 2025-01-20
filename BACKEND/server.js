@@ -36,6 +36,9 @@ app.use('/auth', authRoutes);
 const userProfile = require('./routes/userRoute');
 app.use('/user', userProfile);
 
+const contactUs = require('./controllers/contactUs');
+app.use('/contactUs', contactUs);
+
 const URL = process.env.MONGODB_URL;
 
 mongoose.connect(URL).then(() => {

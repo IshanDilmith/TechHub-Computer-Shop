@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const UpdateCategory = ({categoryId, currentName, onUpdate}) => {
 
@@ -15,7 +17,14 @@ const UpdateCategory = ({categoryId, currentName, onUpdate}) => {
 
         axios.put(`http://localhost:3000/ItemCategory/UpdateItemCategory/${categoryId}`, {categoryName : categoryName})
             .then(() => {
-                toast.success('Category Updated Successfully!!');
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Category Updated Successfully!!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                
                 closeModel();
                 onUpdate();
             })

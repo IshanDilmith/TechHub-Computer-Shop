@@ -100,7 +100,7 @@ const deleteItem = router.delete('/DeleteItem/:id', async (req, res) => {
         }
 
         await pcItems.findByIdAndDelete(itemID);
-        res.status(200).send({ status: "Package deleted!" });
+        res.status(200).send({ status: "Item deleted!" });
 
     } catch (err) {
         console.log(err.message);

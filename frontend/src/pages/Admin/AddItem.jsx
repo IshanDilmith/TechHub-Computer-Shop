@@ -3,7 +3,6 @@ import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-import './sweetaler.css';
 
 const AddItem = () => {
 
@@ -49,8 +48,14 @@ const AddItem = () => {
                     icon: "success",
                     title: "Item Added Successfully!!",
                     showConfirmButton: false,
-                    timer: 5000
+                    timer: 1500
                   });
+                    setItemName('');
+                    setItemPrice('');
+                    setItemDescription('');
+                    setSelectedCategory('');
+                    setItemStock('');
+                    document.getElementById("file").value = null
 
             })
             .catch(err => {
@@ -74,16 +79,19 @@ const AddItem = () => {
                     <div className="form-group">
                         <label>Item Name</label>
                         <input type="text" className="form-control" 
+                        value={itemName}
                         onChange={(e) => setItemName(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Price</label>
                         <input type="number" className="form-control" 
+                        value={itemPrice}
                         onChange={(e) => setItemPrice(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Description</label>
                         <input type="text" className="form-control" 
+                        value={itemDescription}
                         onChange={(e) => setItemDescription(e.target.value)} required/>
                     </div>
                     <div className="form-group">
@@ -102,12 +110,17 @@ const AddItem = () => {
                     <div className="form-group">
                         <label>Item Stock</label>
                         <input type="number" className="form-control" 
+                        value={itemStock}
                         onChange={(e) => setItemStock(e.target.value)} required/>
                     </div>
                     <div className="form-group">
                         <label>Item Image</label>
                         <input type="file" className="form-control" 
-                        onChange={(e) => setItemImage(e.target.files[0])} required/>
+                        id="file"
+                        onChange={(e) => {
+                            setItemImage(e.target.files[0])
+                        }} 
+                        required/>
                     </div>
                     <button type="submit" className="btn btn-primary">Add Item</button>
                 </form>

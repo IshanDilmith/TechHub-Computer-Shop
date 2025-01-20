@@ -82,7 +82,7 @@ router.delete('/DeleteItemCategory/:id', async (req, res) => {
 
         if (productsUsingCategory.length > 0) {
             return res.status(400).send({
-                message: `Cannot delete category "${category.categoryName}", it ${productsUsingCategory.length} product(s).`,
+                message: `Cannot delete category "${category.categoryName}", it has ${productsUsingCategory.length} product(s).`,
             });
         }
 

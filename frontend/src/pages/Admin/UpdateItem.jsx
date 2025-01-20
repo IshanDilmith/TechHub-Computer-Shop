@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
-import { useParams, useNavigate  } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const UpdateItem = () => {
     const {id} = useParams();
     const [itemCategory, setItemCategory] = useState([]);
-    const navigate = useNavigate();
 
     const [values, setValues] = useState({
         itemName: '',
@@ -59,9 +60,13 @@ const UpdateItem = () => {
 
         axios.put(`http://localhost:3000/pcItems/UpdateItem/${id}`, formData)
             .then(() => {
-                toast.success('Item Updated Successfully!!');
-
-                navigate('/Items');
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Item Updated Successfully!!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
 
             })
             .catch(err => {
