@@ -7,7 +7,6 @@ export const totalPrice = (cart) => {
 }
 
 const CartReducer = (state, action) => {
-    let updatedState;
 
     switch (action.type) {
         case "Add":
@@ -78,7 +77,5 @@ export const loadCartFromSessionStorage = (userId) => {
     const savedCart = JSON.parse(sessionStorage.getItem(`cart_${userId}`));
     return savedCart || [];
 };
-
-
 
 export default CartReducer;

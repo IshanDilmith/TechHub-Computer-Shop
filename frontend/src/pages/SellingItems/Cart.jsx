@@ -8,20 +8,22 @@ import Navbar from '../Components/Navbar/Navbar';
 
 const Cart = () => {
     const { cart, dispatch, user } = useContext(UserContext);
-    const userId = user?._id;
+    const userId = user?.userId;
 
     useEffect(() => {
-        if (cart.length === 0 && userId) {
+        if (userId && cart.length === 0) {
             const savedCart = loadCartFromSessionStorage(userId);
-            savedCart.forEach(item => {
-                dispatch({
-                    type: 'Add',
-                    item,
-                    userId,
+            if (savedCart.length > 0) {
+                savedCart.forEach(item => {
+                    dispatch({
+                        type: 'Add',
+                        item,
+                        userId,
+                    });
                 });
-            });
+            }
         }
-    }, [cart, dispatch, userId]);
+    }, [userId, cart.length, dispatch]);
 
     const Increase = (id) => {
         const index = cart.findIndex((item) => item._id === id);
@@ -81,6 +83,7 @@ const Cart = () => {
                                 dispatch({
                                     type: 'Remove',
                                     payload: item._id,
+                                    userId,
                                 });
                             }}
                             className="bg-red-500 text-white w-full py-2 rounded hover:bg-red-600"
