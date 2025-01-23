@@ -4,10 +4,12 @@ import toast, { Toaster } from "react-hot-toast";
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const UpdateItem = () => {
     const {id} = useParams();
     const [itemCategory, setItemCategory] = useState([]);
+    const navigate = useNavigate();
 
     const [values, setValues] = useState({
         itemName: '',
@@ -67,6 +69,8 @@ const UpdateItem = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
+
+                navigate('/AllItems');
 
             })
             .catch(err => {

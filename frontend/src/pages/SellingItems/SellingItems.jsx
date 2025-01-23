@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { UserContext } from '../../pages/Components/UserContext';
 
 const SellingItems = () => {
@@ -9,6 +9,20 @@ const SellingItems = () => {
     const { user } = useContext(UserContext);
 
     const [items, setItems] = useState([]);
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredItems, setFilteredItems] = useState([]);
+
+    useEffect(() => {
+        const filtered = items.filter((item) => 
+            item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    
+        setFilteredItems(filtered);
+    
+    }, [searchQuery, items]);
+    
+
 
     const fetchItems = async () => { 
         try {
@@ -33,8 +47,19 @@ const SellingItems = () => {
     return (
         <div>
             <Toaster />
+            
+            <form className="max-w-md mx-auto">   
+                <label>Search</label>
+                <div className="relative">
+                    <input type="search" placeholder="Search Items"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    required />
+                </div>
+            </form>
+
             <div className="container">
                 <h2>All Items</h2>
+                
                 <table className="table table-striped">
                     <thead>
                         <tr>
@@ -47,7 +72,7 @@ const SellingItems = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {items.map((item) => (
+                        {filteredItems.length > 0 ? filteredItems.map((item) => (
                             <tr key={item._id}>
                                 <td>{item.itemName}</td>
                                 <td><img src={`http://localhost:3000/PCItemImages/${item.itemImage}`} width="100" /></td>
@@ -57,6 +82,10 @@ const SellingItems = () => {
                                 <td>
                                     <button className="btn btn-primary"
                                         onClick={() => {
+                                            if(user === null) {
+                                                toast.error('Please login to add items to cart');
+                                                return;
+                                            }
                                             console.log("User object:", user);
                                             console.log("User ID:", user?.userId);
                                             dispatch({
@@ -70,7 +99,11 @@ const SellingItems = () => {
                                     </button>
                                 </td>
                             </tr>
-                        ))}
+                        )) :
+                        <tr>
+                            <td colSpan="6" className="text-center">No items found</td>
+                        </tr>
+                        }
                     </tbody>
                 </table>
             </div>

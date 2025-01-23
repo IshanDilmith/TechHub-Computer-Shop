@@ -20,6 +20,7 @@ const ItemCategory = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
+                setCategoryName('');
             })
             .catch(err => {
                 if(err.response.status === 500){
@@ -42,6 +43,7 @@ const ItemCategory = () => {
                     <div className="form-group">
                         <label>Category Name</label>
                         <input type="text" className="form-control" 
+                        value={categoryName}
                         onChange={(e) => setCategoryName(e.target.value)} />
                     </div>
                     <button className="btn btn-primary">Add Category</button>
