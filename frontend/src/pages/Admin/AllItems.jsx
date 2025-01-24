@@ -8,7 +8,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 const AllItems = () => {
     const [items, setItems] = useState([]);
 
-    const fetchItems = async () => { 
+    const fetchItems = async () => {
         try {
             const response = await axios.get('http://localhost:3000/pcItems/');
             setItems(response.data);
@@ -18,9 +18,13 @@ const AllItems = () => {
     }
 
     useEffect(() => {
-        fetchItems();
+        const interval = setInterval(() => {
+            fetchItems();
+        }, 1000);
 
-    }, [items]);
+        return () => clearInterval(interval);
+
+    }, []);
 
     const deleteItem = async (id) => {
         Swal.fire({

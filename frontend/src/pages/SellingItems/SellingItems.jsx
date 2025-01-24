@@ -3,31 +3,22 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { UserContext } from '../../pages/Components/UserContext';
+import Filter from './filter';
 
 const SellingItems = () => {
     const { dispatch } = useContext(UserContext);
     const { user } = useContext(UserContext);
 
     const [items, setItems] = useState([]);
-
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
-
-    useEffect(() => {
-        const filtered = items.filter((item) => 
-            item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    
-        setFilteredItems(filtered);
-    
-    }, [searchQuery, items]);
-    
-
 
     const fetchItems = async () => { 
         try {
             const response = await axios.get('http://localhost:3000/pcItems/');
             setItems(response.data);
+            setFilteredItems(response.data);
         } catch (err) {
             console.error(err);
         }
@@ -36,13 +27,34 @@ const SellingItems = () => {
     useEffect(() => {
         fetchItems();
 
-        const interval = setInterval(() => {
-            fetchItems();
-        }, 100);
-
-        return () => 
-            clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        let filtered = items;
+        if (searchQuery) {
+            filtered = filtered.filter((item) => 
+                item.itemName.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+
+        if (selectedCategory.length > 0) {
+            filtered = filtered.filter((item) => 
+                selectedCategory.includes(item.itemCategory));
+        }
+
+        setFilteredItems(filtered);
+    
+    }, [searchQuery, selectedCategory, items]);
+
+    const handleCategoryChange = (categoryName, isChecked) => {
+        if (isChecked) {
+          setSelectedCategory([...selectedCategory, categoryName]);
+        } else {
+          setSelectedCategory(
+            selectedCategory.filter((category) => category !== categoryName)
+          );
+        }
+      };
+
 
     return (
         <div>
@@ -67,6 +79,8 @@ const SellingItems = () => {
                     </button>
                 </div>
             </form>
+
+            <Filter onCategoryChange={handleCategoryChange} />
 
             <div className="container">
                 <h2>All Items</h2>
