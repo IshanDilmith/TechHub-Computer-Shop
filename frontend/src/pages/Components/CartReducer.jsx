@@ -66,6 +66,10 @@ const CartReducer = (state, action) => {
         case "Init":
             return action.payload;
 
+        case "Clear":
+            sessionStorage.removeItem(`cart_${action.userId}`);
+            return [];
+
         default:
             return state;
     }

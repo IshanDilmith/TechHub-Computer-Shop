@@ -49,7 +49,7 @@ const AllItems = () => {
             }
           }).catch((err) => {
             console.log(err);
-          });
+         });
     };
 
     return (

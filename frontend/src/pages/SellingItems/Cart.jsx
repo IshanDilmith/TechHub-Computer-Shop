@@ -5,6 +5,9 @@ import { totalItems } from '../Components/CartReducer';
 import { totalPrice } from '../Components/CartReducer';
 import { loadCartFromSessionStorage } from '../Components/CartReducer';
 import Navbar from '../Components/Navbar/Navbar';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
     const { cart, dispatch, user } = useContext(UserContext);
@@ -47,6 +50,56 @@ const Cart = () => {
             });
         }
     };
+
+    const handleCheckout = async () => {
+        try {
+            Swal.fire({
+                title: "Are you sure you want to place the order?",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, place it!"
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await fetch('http://localhost:3000/order/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: userId,
+                            products: cart.map((item) => ({
+                                itemName: item.itemName,
+                                itemQuantity: item.cartUsage,
+                            })),
+                            total: totalPrice(cart),
+                        }),
+                    });
+        
+                    if (response.ok) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Order Placed Successfully!!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+        
+                        dispatch({
+                            type: 'Clear',
+                            userId,
+                        });
+        
+                    } else {
+                        toast.error('Failed to place order');
+                    }
+                }});
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('Failed to place order');
+        }
+    };
+
 
 
     return (
@@ -95,7 +148,8 @@ const Cart = () => {
                 <div>
                     <h5>Total Items:{totalItems(cart)}</h5>
                     <h5>Total Price:{totalPrice(cart)}</h5>
-                    <button className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600">
+                    <button className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
+                        onClick={handleCheckout}>
                         Checkout
                     </button>
                 </div>

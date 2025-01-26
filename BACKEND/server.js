@@ -39,6 +39,9 @@ app.use('/user', userProfile);
 const contactUs = require('./controllers/contactUs');
 app.use('/contactUs', contactUs);
 
+const order = require('./controllers/order');
+app.use('/order', order);
+
 const URL = process.env.MONGODB_URL;
 
 mongoose.connect(URL).then(() => {
