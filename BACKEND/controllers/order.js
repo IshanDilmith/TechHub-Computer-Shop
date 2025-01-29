@@ -8,10 +8,10 @@ router.post('/', async (req, res) => {
             userName: req.body.userName,
             email: req.body.email,
             phone: req.body.phone,
-            deliveryAddess: req.body.deliveryAddess,
+            deliveryAddress: req.body.deliveryAddress,
             comments: req.body.comments,
             products: req.body.products,
-            total: req.body.total,
+            totalPrice: req.body.total,
         });
         const savedOrder = await newOrder.save();
         res.status(200).send(savedOrder);

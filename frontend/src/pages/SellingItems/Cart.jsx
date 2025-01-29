@@ -79,6 +79,7 @@ const Cart = () => {
     const handleCheckout = async (e) => {
         try {
             e.preventDefault();
+            console.log('Form Data:', formData);
             Swal.fire({
                 title: "Are you sure you want to place the order?",
                 showCancelButton: true,

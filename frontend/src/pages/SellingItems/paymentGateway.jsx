@@ -1,15 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState, useContext, forwardRef, useImperativeHandle } from "react";
-import { UserContext } from "../Components/UserContext";
 import toast, { Toaster } from "react-hot-toast";
 
 
 const PaymentGateway = forwardRef(({amount}, ref) => {
-    const { user } = useContext(UserContext);
     const [isModelOpen, setIsModelOpen] = useState(false);
 
     const initiatePayment = async () => {
         try {
+            console.log("Initiating payment for amount:", amount);
             const response = await axios.get('http://localhost:3000/payment/success');
             const responseData = response.data;
 

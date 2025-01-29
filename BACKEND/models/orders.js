@@ -18,7 +18,7 @@ const orders = new Schema({
         type: String,
         required: true
     },
-    deliveryAddess: {
+    deliveryAddress: {
         type: String,
         required: true
     },
@@ -41,7 +41,7 @@ const orders = new Schema({
         type: String,
         required: false
     },
-    total: {
+    totalPrice: {
         type: Number,
         required: true
     },
