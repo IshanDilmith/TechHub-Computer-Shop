@@ -8,25 +8,24 @@ import Navbar from '../Components/Navbar/Navbar';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import toast, { Toaster } from "react-hot-toast";
-import axios from 'axios';
-import PaymentGateway from './paymentGateway';
 
 const Cart = () => {
     const { cart, dispatch, user } = useContext(UserContext);
-    const paymentGatewayRef = useRef(null)
     const userId = user?.userId;
 
     const [formData, setFormData] = useState({
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
+        order_id: "ItemNo12345",
+        amount: totalPrice(cart),
+        currency: "LKR",
+        first_name: user?.firstName || '',
+        last_name: user?.lastName || '',
         email: user?.email || '',
         phone: '',
-        deliveryAddress: '',
-        comments: '',
-        userId: userId,
+        address: '',
+        city: "Colombo",
+        country: "Sri Lanka",
     });
     
-    const [totalAmount, setTotalAmount] = useState(0);
     const [paymentInitiated, setPaymentInitiated] = useState(false);
     const [orderConfirmed, setOrderConfirmed] = useState(false);
 
@@ -88,20 +87,53 @@ const Cart = () => {
                 confirmButtonText: "Yes, place it!"
               }).then(async (result) => {
                 if(result.isConfirmed) {
-                    setTotalAmount(totalPrice(cart));
                     setOrderConfirmed(true);
-                    const response = await axios.post('http://localhost:3000/payment/', formData);
-                    console.log(response.data);
-                    setPaymentInitiated(true);
+                    const response = await fetch(
+                        'http://localhost:3000/payment/start',
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify(formData),
+                        }
+                    );
 
-                    if (paymentGatewayRef.current) {
-                        await paymentGatewayRef.current.initiatePayment();
+                    if (response.ok) {
+                        const { hash, merchant_id } = await response.json();
+                
+                        // Payment configuration
+                        const payment = {
+                            sandbox: true, // Use sandbox for testing
+                            merchant_id: merchant_id,
+                            return_url: "http://localhost:5173/", // Replace with your return URL
+                            cancel_url: "http://localhost:5173/", // Replace with your cancel URL
+                            notify_url:
+                                'http://localhost:3000/payment/notify', // Replace with your notify URL - This should be public IP (No Localhost)
+                            order_id: formData.order_id,
+                            items: "Item Title",
+                            amount: formData.amount,
+                            currency: formData.currency,
+                            first_name: formData.first_name,
+                            last_name: formData.last_name,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: formData.address,
+                            city: formData.city,
+                            country: formData.country,
+                            hash: hash,
+                        };
+                
+                        // Initialize PayHere payment
+                        payhere.startPayment(payment);
+                        setPaymentInitiated(true);
                     } else {
-                        console.error("Payment gateway is not available.");
-                    }
+                        console.error("Failed to generate hash for payment.");
+                      }
+                    
                 }
                     
-                });
+            });
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to place order');
@@ -119,7 +151,7 @@ const Cart = () => {
                 userName: user?.firstName + ' ' + user?.lastName,
                 email: user?.email,
                 phone : formData.phone,
-                deliveryAddress: formData.deliveryAddress,
+                deliveryAddress: formData.address,
                 comments: formData.comments,
                 products: cart.map((item) => ({
                     itemName: item.itemName,
@@ -153,7 +185,6 @@ const Cart = () => {
             storeOrder();
         }
     }, [paymentInitiated, orderConfirmed]);
-
 
 
     return (
@@ -224,8 +255,8 @@ const Cart = () => {
                             <div>
                                 <label>Delivery Address : </label>
                                 <input type="text" 
-                                    name='deliveryAddress'
-                                    value={formData.deliveryAddress}
+                                    name='address'
+                                    value={formData.address}
                                     onChange={handleChange}
                                 required/>
                             </div>
@@ -250,9 +281,6 @@ const Cart = () => {
                         </form>
                     </div>
                 </div>
-                {paymentInitiated && (
-                        <PaymentGateway ref={paymentGatewayRef} amount={totalAmount} />
-                    )}
             </div>
         </div>
     );

@@ -1,64 +1,85 @@
-const express = require('express');
-const md5 = require('crypto-js/md5');
-const { v4: uuidv4 } = require('uuid'); 
+const express = require("express");
+const crypto = require("crypto");
+
 const router = express.Router();
-require('dotenv').config();
 
-const { MERCHANT_ID, MERCHANT_SECRET } = process.env;
+// Merchant details
+const merchant_id = "1229432"; 
+const merchant_secret = "MzkxNDc2NzY1NDgzMDIyMzAzNDI1MDAyNDExNDYxMjQzMjYwODU5"; 
 
-function createHash(data) {
-    const { merchantId, orderId, amount, currency, merchantSecret } = data;
-    const hashedSecret = md5(merchantSecret).toString().toUpperCase();
-    const amountFormatted = parseFloat(amount).toLocaleString('en-us', { minimumFractionDigits: 2 }).replaceAll(',', '');
-    const hash = md5(merchantId + orderId + amountFormatted + currency + hashedSecret).toString().toUpperCase();
-    return hash;
-}
+router.post("/start", (req, res) => {
+  const { order_id, amount, currency } = req.body;
+  console.log("Payment request for order:", order_id);
+  
 
-let paymentData;
+  // Generate the hash value
+  const hash = crypto
+    .createHash("md5")
+    .update(
+      merchant_id +
+        order_id +
+        amount +
+        currency +
+        crypto
+          .createHash("md5")
+          .update(merchant_secret)
+          .digest("hex")
+          .toUpperCase()
+    )
+    .digest("hex")
+    .toUpperCase();
 
-router.post('/', (req, res) => {
-    const { amount, firstName, lastName, email, phone, address, userId } = req.body;
+    console.log("Hash generated for order:", order_id);
+    
 
-    const orderId = uuidv4();
-
-    const hashData = {
-        merchantId: MERCHANT_ID,
-        orderId,
-        amount,
-        currency: 'LKR',
-        merchantSecret: MERCHANT_SECRET,
-    };
-
-    // Calculate hash
-    const hash = createHash(hashData);
-
-    paymentData = {
-       ...hashData,
-        return_url: 'http://localhost:5173/',
-        cancel_url: 'http://localhost:5173/',
-        notify_url: 'http://localhost:5173/',
-        hash,
-        firstName,
-        lastName,
-        email,
-        phone,
-        address,
-        city: 'Colombo',
-        country: 'Sri Lanka',
-        userId
-    };
-
-    res.json(paymentData);
-    console.log(`Payment Creation Data is ${JSON.stringify(paymentData)}`);
+  res.json({ hash, merchant_id });
 });
 
-router.get('/success', (req, res) => {
-    if(!paymentData) {
-        return res.status(404).json({ message: 'No payment data found. Please create a payment first.' });
-    }
+// Payment notification endpoint
+router.post("/notify", (req, res) => {
 
-    res.json(paymentData);
+  console.log("Payment notification received");
+  
+  const {
+    merchant_id,
+    order_id,
+    payhere_amount,
+    payhere_currency,
+    status_code,
+    md5sig,
+  } = req.body;
+
+  const local_md5sig = crypto
+    .createHash("md5")
+    .update(
+      merchant_id +
+        order_id +
+        payhere_amount +
+        payhere_currency +
+        status_code +
+        crypto
+          .createHash("md5")
+          .update(merchant_secret)
+          .digest("hex")
+          .toUpperCase()
+    )
+    .digest("hex")
+    .toUpperCase();
+
+    console.log("Payment notification for order:", order_id);
+
+
     
+
+  if (local_md5sig === md5sig && status_code == "2") {
+    // Payment success - update the database
+    console.log("Payment successful for order:", order_id);
+    res.sendStatus(200);
+  } else {
+    // Payment verification failed
+    console.log("Payment verification failed for order:", order_id);
+    res.sendStatus(400);
+  }
 });
 
 module.exports = router;
