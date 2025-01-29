@@ -6,6 +6,22 @@ const orders = new Schema({
         type: String,
         required: true
     },
+    userName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    deliveryAddess: {
+        type: String,
+        required: true
+    },
     orderDate: {
         type: Date,
         default: Date.now,
@@ -21,6 +37,10 @@ const orders = new Schema({
             required: true
         }
     }],
+    comments : {
+        type: String,
+        required: false
+    },
     total: {
         type: Number,
         required: true

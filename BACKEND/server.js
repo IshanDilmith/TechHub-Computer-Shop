@@ -42,6 +42,9 @@ app.use('/contactUs', contactUs);
 const order = require('./controllers/order');
 app.use('/order', order);
 
+const paymentHandler = require('./controllers/paymentHandler');
+app.use('/payment', paymentHandler);
+
 const URL = process.env.MONGODB_URL;
 
 mongoose.connect(URL).then(() => {

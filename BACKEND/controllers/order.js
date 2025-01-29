@@ -5,6 +5,11 @@ router.post('/', async (req, res) => {
     try {
         const newOrder = new order({
             userId: req.body.userId,
+            userName: req.body.userName,
+            email: req.body.email,
+            phone: req.body.phone,
+            deliveryAddess: req.body.deliveryAddess,
+            comments: req.body.comments,
             products: req.body.products,
             total: req.body.total,
         });
