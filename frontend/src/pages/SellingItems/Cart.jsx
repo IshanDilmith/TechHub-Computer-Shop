@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserContext } from '../Components/UserContext';
 import { useContext } from 'react';
 import { totalItems } from '../Components/CartReducer';
@@ -8,26 +8,31 @@ import Navbar from '../Components/Navbar/Navbar';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import toast, { Toaster } from "react-hot-toast";
+import axios from 'axios';
 
 const Cart = () => {
     const { cart, dispatch, user } = useContext(UserContext);
     const userId = user?.userId;
 
     const [formData, setFormData] = useState({
-        amount: totalPrice(cart),
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        phone: "",
+        address: "",
+        city: "",
+        amount: "",
         currency: "LKR",
-        first_name: user?.firstName || '',
-        last_name: user?.lastName || '',
-        email: user?.email || '',
-        phone: '',
-        address: '',
-        city: "Colombo",
-        country: "Sri Lanka",
         comments: '',
+        userId: userId,
     });
-    
-    const [paymentInitiated, setPaymentInitiated] = useState(false);
-    const [orderConfirmed, setOrderConfirmed] = useState(false);
+
+    useEffect(() => {
+        setFormData((prev) => ({
+            ...prev,
+            amount: totalPrice(cart),
+        }));
+    }, [cart]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -54,6 +59,7 @@ const Cart = () => {
 
     const Increase = (id) => {
         const index = cart.findIndex((item) => item._id === id);
+        if (index === -1) return;
         if(cart[index].cartUsage < cart[index].itemStock) {
             dispatch({
                 type: 'Increase',
@@ -66,6 +72,7 @@ const Cart = () => {
 
     const Decrease = (id) => {
         const index = cart.findIndex((item) => item._id === id);
+        if (index === -1) return;
         if(cart[index].cartUsage > 1) {
             dispatch({
                 type: 'Decrease',
@@ -75,9 +82,8 @@ const Cart = () => {
         }
     };
 
-    const handleCheckout = async (e) => {
+    const handleCheckout = async () => {
         try {
-            e.preventDefault();
             console.log('Form Data:', formData);
             Swal.fire({
                 title: "Are you sure you want to place the order?",
@@ -87,60 +93,92 @@ const Cart = () => {
                 confirmButtonText: "Yes, place it!"
               }).then(async (result) => {
                 if(result.isConfirmed) {
-                    setOrderConfirmed(true);
-                    const response = await fetch(
-                        'https://df95-112-135-190-69.ngrok-free.app/payment/start',
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          credentials: 'include',
-                          body: JSON.stringify(formData),
-                        }
-                    );
+                    const response = await axios.get('http://localhost:3000/payment/');
+                    const responseData = response.data;
 
-                    if (response.ok) {
-                        const { hash, merchant_id, order_id } = await response.json();
-                
-                        // Payment configuration
+                    if (response.status === 200) {
                         const payment = {
-                            sandbox: true, // Use sandbox for testing
-                            merchant_id: merchant_id,
-                            return_url: "http://localhost:5173/", // Replace with your return URL
-                            cancel_url: "http://localhost:5173/", // Replace with your cancel URL
-                            notify_url: "https://df95-112-135-190-69.ngrok-free.app/payment/notify",
-                            order_id: order_id,
-                            items: "Item Title",
+                            sandbox: true,
+                            merchant_id: responseData.merchantId,
+                            return_url: responseData.return_url,
+                            cancel_url: responseData.cancel_url,
+                            notify_url: responseData.notify_url,
+                            first_name: responseData.first_name,
+                            last_name: responseData.last_name,
+                            email: responseData.email,
+                            phone: responseData.phone,
+                            address: responseData.address,
+                            city: responseData.city,
+                            country: responseData.country,
+                            order_id: responseData.orderId,
+                            items: responseData.items,
                             amount: formData.amount,
-                            currency: formData.currency,
-                            first_name: formData.first_name,
-                            last_name: formData.last_name,
-                            email: formData.email,
-                            phone: formData.phone,
-                            address: formData.address,
-                            city: formData.city,
-                            country: formData.country,
-                            hash: hash,
+                            currency: responseData.currency,
+                            hash: responseData.hash,
                         };
+            
+                        window.payhere.onCompleted = async function (OrderID) {
 
-                        payhere.onCompleted = function onCompleted(orderId) {
-                            console.log("Payment completed. Order ID: " + orderId);
-                        };
-                          
-                        payhere.onDismissed = function onDismissed() {
-                            console.log("Payment dismissed.");
-                        };
-                          
-                        payhere.onError = function onError(error) {
-                            console.log("Error: " + error);
-                        };
-                          
-                
-                        // Initialize PayHere payment
-                        payhere.startPayment(payment);
+                            try {
+                                const response = await fetch('http://localhost:3000/order/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        userId: userId,
+                                        userName: user?.firstName + ' ' + user?.lastName,
+                                        email: user?.email,
+                                        phone : formData.phone,
+                                        deliveryAddress: formData.address,
+                                        comments: formData.comments,
+                                        products: cart.map((item) => ({
+                                            itemName: item.itemName,
+                                            itemQuantity: item.cartUsage,
+                                        })),
+                                        total: totalPrice(cart),
+                                    }),
+                                });
                         
-                        setPaymentInitiated(true);
+                                if (response.ok) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "success",
+                                        title: "Order Placed Successfully!!",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                        
+                                    dispatch({
+                                        type: 'Clear',
+                                        userId,
+                                    });
+                        
+                                } else {
+                                    toast.error('Failed to place order');
+                                }
+
+                            } catch (err) {
+                                toast.error("Failed to place the order." + err.message);
+                            }
+
+                        };
+            
+                        window.payhere.onDismissed = function () {
+                            console.log("Payment dismissed");
+
+                        };
+            
+                        window.payhere.onError = function (error) {
+                            toast.error("Error occurred. " + error);
+                            console.log("Error: " + error);
+
+                            setTimeout(() => {
+                                window.location.href = '/cart';
+                            }, 2000);
+                        };
+            
+                        window.payhere.startPayment(payment);
                         
                         
                     } else {
@@ -156,51 +194,22 @@ const Cart = () => {
         }
     };
 
-    const storeOrder = async () => {
-        const response = await fetch('http://localhost:3000/order/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId: userId,
-                userName: user?.firstName + ' ' + user?.lastName,
-                email: user?.email,
-                phone : formData.phone,
-                deliveryAddress: formData.address,
-                comments: formData.comments,
-                products: cart.map((item) => ({
-                    itemName: item.itemName,
-                    itemQuantity: item.cartUsage,
-                })),
-                total: totalPrice(cart),
-            }),
-        });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        if (response.ok) {
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Order Placed Successfully!!",
-                showConfirmButton: false,
-                timer: 1500
-            });
+        try {
+            const response = await axios.post("http://localhost:3000/payment/create-payment", formData);
+            
+            if (response.status === 200) {
+                handleCheckout();
+            } else {
+                console.error("Payment gateway is not available.");
+            }
 
-            dispatch({
-                type: 'Clear',
-                userId,
-            });
-
-        } else {
-            toast.error('Failed to place order');
-        }
+        } catch (err) {
+            console.error("Failed to create payment:", err);
+        } 
     };
-
-    useEffect(() => {
-        if (paymentInitiated && orderConfirmed) {
-            storeOrder();
-        }
-    }, [paymentInitiated, orderConfirmed]);
 
 
     return (
@@ -250,7 +259,7 @@ const Cart = () => {
                         </div>
                     ))}
                     <div>
-                        <form onSubmit={handleCheckout}> 
+                        <form onSubmit={handleSubmit}> 
                             <div>
                                 <label>First Name : {user?.firstName} {user?.lastName}</label>
                             </div>
