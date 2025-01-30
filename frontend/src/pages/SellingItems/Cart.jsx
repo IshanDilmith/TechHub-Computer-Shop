@@ -14,7 +14,6 @@ const Cart = () => {
     const userId = user?.userId;
 
     const [formData, setFormData] = useState({
-        order_id: "ItemNo12345",
         amount: totalPrice(cart),
         currency: "LKR",
         first_name: user?.firstName || '',
@@ -24,6 +23,7 @@ const Cart = () => {
         address: '',
         city: "Colombo",
         country: "Sri Lanka",
+        comments: '',
     });
     
     const [paymentInitiated, setPaymentInitiated] = useState(false);
@@ -89,7 +89,7 @@ const Cart = () => {
                 if(result.isConfirmed) {
                     setOrderConfirmed(true);
                     const response = await fetch(
-                        'https://3494-128-199-83-243.ngrok-free.app/payment/start',
+                        'https://df95-112-135-190-69.ngrok-free.app/payment/start',
                         {
                           method: "POST",
                           headers: {
@@ -101,7 +101,7 @@ const Cart = () => {
                     );
 
                     if (response.ok) {
-                        const { hash, merchant_id } = await response.json();
+                        const { hash, merchant_id, order_id } = await response.json();
                 
                         // Payment configuration
                         const payment = {
@@ -109,8 +109,8 @@ const Cart = () => {
                             merchant_id: merchant_id,
                             return_url: "http://localhost:5173/", // Replace with your return URL
                             cancel_url: "http://localhost:5173/", // Replace with your cancel URL
-                            notify_url: "https://3494-128-199-83-243.ngrok-free.app/payment/notify",
-                            order_id: formData.order_id,
+                            notify_url: "https://df95-112-135-190-69.ngrok-free.app/payment/notify",
+                            order_id: order_id,
                             items: "Item Title",
                             amount: formData.amount,
                             currency: formData.currency,
@@ -123,13 +123,25 @@ const Cart = () => {
                             country: formData.country,
                             hash: hash,
                         };
+
+                        payhere.onCompleted = function onCompleted(orderId) {
+                            console.log("Payment completed. Order ID: " + orderId);
+                        };
+                          
+                        payhere.onDismissed = function onDismissed() {
+                            console.log("Payment dismissed.");
+                        };
+                          
+                        payhere.onError = function onError(error) {
+                            console.log("Error: " + error);
+                        };
+                          
                 
                         // Initialize PayHere payment
-                        const paymentdone = payhere.startPayment(payment);
-                        if (paymentdone) {
-                            console.log("Payment initiated");
-                            setPaymentInitiated(true);
-                        }
+                        payhere.startPayment(payment);
+                        
+                        setPaymentInitiated(true);
+                        
                         
                     } else {
                         console.error("Failed to generate hash for payment.");
@@ -278,6 +290,7 @@ const Cart = () => {
                             <h5>Total Price:{totalPrice(cart)}</h5>
                             <button 
                                 type='submit' 
+                                disabled={cart.length === 0}
                                 className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600">
                                     Checkout
                             </button>

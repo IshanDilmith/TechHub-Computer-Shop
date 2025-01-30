@@ -1,16 +1,18 @@
 const express = require("express");
 const crypto = require("crypto");
+const { v4: uuidv4 } = require("uuid");
 
 const router = express.Router();
 
 // Merchant details
 const merchant_id = "1229432"; 
-const merchant_secret = "MzkxNDc2NzY1NDgzMDIyMzAzNDI1MDAyNDExNDYxMjQzMjYwODU5"; 
+const merchant_secret = "MzQ0MTEyMjA0NzEwNjQ1MzM3MjA2NDU4MDk0NDgzMjI3OTI3MTAx"; 
 
 router.post("/start", (req, res) => {
-  const { order_id, amount, currency } = req.body;
-  console.log("Payment request for order:", order_id);
+  const { amount, currency } = req.body;
   
+  const order_id = uuidv4();
+  console.log("Payment request for order:", order_id);
 
   // Generate the hash value
   const hash = crypto
@@ -32,7 +34,7 @@ router.post("/start", (req, res) => {
     console.log("Hash generated for order:", hash);
     
 
-  res.json({ hash, merchant_id });
+  res.json({ hash, merchant_id, order_id });
 });
 
 // Payment notification endpoint
