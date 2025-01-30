@@ -89,12 +89,13 @@ const Cart = () => {
                 if(result.isConfirmed) {
                     setOrderConfirmed(true);
                     const response = await fetch(
-                        'http://localhost:3000/payment/start',
+                        'https://3494-128-199-83-243.ngrok-free.app/payment/start',
                         {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
                           },
+                          credentials: 'include',
                           body: JSON.stringify(formData),
                         }
                     );
@@ -108,8 +109,7 @@ const Cart = () => {
                             merchant_id: merchant_id,
                             return_url: "http://localhost:5173/", // Replace with your return URL
                             cancel_url: "http://localhost:5173/", // Replace with your cancel URL
-                            notify_url:
-                                'http://localhost:3000/payment/notify', // Replace with your notify URL - This should be public IP (No Localhost)
+                            notify_url: "https://3494-128-199-83-243.ngrok-free.app/payment/notify",
                             order_id: formData.order_id,
                             items: "Item Title",
                             amount: formData.amount,
@@ -125,11 +125,15 @@ const Cart = () => {
                         };
                 
                         // Initialize PayHere payment
-                        payhere.startPayment(payment);
-                        setPaymentInitiated(true);
+                        const paymentdone = payhere.startPayment(payment);
+                        if (paymentdone) {
+                            console.log("Payment initiated");
+                            setPaymentInitiated(true);
+                        }
+                        
                     } else {
                         console.error("Failed to generate hash for payment.");
-                      }
+                    }
                     
                 }
                     

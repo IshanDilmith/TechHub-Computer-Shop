@@ -29,7 +29,7 @@ router.post("/start", (req, res) => {
     .digest("hex")
     .toUpperCase();
 
-    console.log("Hash generated for order:", order_id);
+    console.log("Hash generated for order:", hash);
     
 
   res.json({ hash, merchant_id });
