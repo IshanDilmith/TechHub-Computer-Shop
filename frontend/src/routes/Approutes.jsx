@@ -13,6 +13,7 @@ import ProtectedRoute from "../pages/Components/ProtectedRoute";
 import Cart from "../pages/SellingItems/Cart";
 import ContactUs from "../pages/ContactUs/ContactUs";
 import Filter from "../pages/SellingItems/filter";
+import OrderDetails from "../pages/Components/userOrders/orderDetails";
 
 function AppRoutes() {
     return (
@@ -36,6 +37,8 @@ function AppRoutes() {
                 <Route path="/contactUs" element={<ContactUs />} />
 
                 <Route path="/filter" element={<Filter />} />
+
+                <Route path="/order/:orderId" element={<OrderDetails />} />
 
 
             </Routes>

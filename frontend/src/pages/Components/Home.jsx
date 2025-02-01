@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar/Navbar';
 import SellingItems from '../SellingItems/SellingItems';
+import UserOrders from './userOrders/userOrders';
 
 const HomePage = () => {
 
@@ -11,6 +12,8 @@ const HomePage = () => {
         <div>
             <Navbar />
             <SellingItems />
+            <UserOrders />
+
            
         </div>
     )

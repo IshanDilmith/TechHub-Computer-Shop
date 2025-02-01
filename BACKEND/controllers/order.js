@@ -21,4 +21,48 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/allOrders', async (req, res) => {
+    try {
+        const orders = await order.find();
+        res.status(200).send(orders);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Server Error", error: err.message });
+    }
+});
+
+router.get('/order/:orderId', async (req, res) => {
+    const orderId = req.params.orderId;
+
+    try {
+        const fetchOrder = await order.findById(orderId);
+
+        if (!fetchOrder) {
+            res.status(404).send({ message: "No order found" });
+        } else {
+            res.status(200).send(fetchOrder);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Server Error", error: err.message });
+    }
+});
+
+router.get('/:userId', async (req, res) => {
+    let userId = req.params.userId;
+
+    try {
+        const fetchOrder = await order.find({ userId: userId });
+
+        if (!fetchOrder) {
+            res.status(404).send({ message: "No orders found for this user" });
+        } else {
+            res.status(200).send(fetchOrder);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Server Error", error: err.message });
+    }
+});
+
 module.exports = router;
