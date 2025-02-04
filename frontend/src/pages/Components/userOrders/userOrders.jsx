@@ -10,14 +10,18 @@ const UserOrders = () => {
     const { user } = useContext(UserContext);
     const userId = user?.userId;
 
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/order/${userId}`);
+            setOrders(response.data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
-        axios.get(`http://localhost:3000/order/${userId}`)
-            .then((response) => {
-                setOrders(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        fetchOrders();
     }, [userId]);
 
     return (

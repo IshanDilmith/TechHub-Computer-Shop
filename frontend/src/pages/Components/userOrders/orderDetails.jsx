@@ -6,14 +6,19 @@ const UserOrders = () => {
     const [order, setOrder] = useState({});
     const { orderId } = useParams();
 
+    const fetchOrder = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/order/order/${orderId}`);
+            setOrder(response.data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+
     useEffect(() => {
-        axios.get(`http://localhost:3000/order/order/${orderId}`)
-            .then((response) => {
-                setOrder(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        fetchOrder();
     }, [orderId]);
 
     return (

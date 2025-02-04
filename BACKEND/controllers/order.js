@@ -65,4 +65,22 @@ router.get('/:userId', async (req, res) => {
     }
 });
 
+router.put('/updateStatus/:orderId', async (req, res) => {
+    const orderId = req.params.orderId;
+    const status = req.body.status;
+
+    try {
+        const updateOrder = await order.findByIdAndUpdate(orderId, { status: status }, { new: true });
+
+        if (!updateOrder) {
+            res.status(404).send({ message: "No order found" });
+        } else {
+            res.status(200).send(updateOrder);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Server Error", error: err.message });
+    }
+});
+
 module.exports = router;

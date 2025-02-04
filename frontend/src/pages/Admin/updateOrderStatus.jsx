@@ -4,23 +4,23 @@ import toast, { Toaster } from "react-hot-toast";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-const UpdateCategory = ({categoryId, currentName, onUpdate}) => {
+const UpdateOrderStatus = ({orderId, currentStatus, onUpdate}) => {
 
     const [isModelOpen, setIsModelOpen] = useState(false);
-    const [categoryName, setCategoryName] = useState(currentName);
+    const [status, setStatus] = useState(currentStatus);
 
     const openModel = () => setIsModelOpen(true);
     const closeModel = () => setIsModelOpen(false);
 
-    const updateCategory = (e) => {
+    const UpdateOrderStatus = (e) => {
         e.preventDefault();
 
-        axios.put(`http://localhost:3000/ItemCategory/UpdateItemCategory/${categoryId}`, {categoryName : categoryName})
+        axios.put(`http://localhost:3000/order/updateStatus/${orderId}`, {status : status})
             .then(() => {
                 Swal.fire({
                     position: "center",
                     icon: "success",
-                    title: "Category Updated Successfully!!",
+                    title: "Order Status Updated Successfully!!",
                     showConfirmButton: false,
                     timer: 1500
                 });
@@ -34,7 +34,7 @@ const UpdateCategory = ({categoryId, currentName, onUpdate}) => {
                 } else if(err.response.status === 400){
                     toast.error(err.response.data.message);
                 } else {
-                    toast.error('Failed to update Category try again!!');
+                    toast.error('Failed to update Order Status try again!!');
                 }
             })
 
@@ -47,28 +47,26 @@ const UpdateCategory = ({categoryId, currentName, onUpdate}) => {
             {isModelOpen && (
                 <div className="modal">
                     <div className="modal-content">
-                        <h4>Update Category</h4>
-                        <form onSubmit={updateCategory}>
+                        <h4>Update Order Status</h4>
+                        <form onSubmit={UpdateOrderStatus}>
                             <div className="form-group">
-                                <label>Category Name</label>
+                                <label>Order Status</label>
                                 <input
                                 type="text"
-                                value={categoryName}
-                                onChange={(e) => setCategoryName(e.target.value)}
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
                                 className="form-control"
                                 required
                                 />
+                                <button type="submit" className="btn btn-success mt-2">Update</button>
+                                <button className="btn btn-danger mt-2" onClick={closeModel}>Cancel</button>
                             </div>
-                            <button type="submit" className="btn btn-success">Save</button>
-                            <button type="button" onClick={closeModel} className="btn btn-secondary">Cancel</button>
                         </form>
                     </div>
                 </div>
             )}
-
         </div>
     )
-
 }
 
-export default UpdateCategory;
+export default UpdateOrderStatus;

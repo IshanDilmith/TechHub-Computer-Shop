@@ -14,6 +14,9 @@ import Cart from "../pages/SellingItems/Cart";
 import ContactUs from "../pages/ContactUs/ContactUs";
 import Filter from "../pages/SellingItems/filter";
 import OrderDetails from "../pages/Components/userOrders/orderDetails";
+import GuestRoute from "../pages/Components/guestRoute";
+import OrderList from "../pages/Admin/orderList";
+
 
 function AppRoutes() {
     return (
@@ -24,12 +27,14 @@ function AppRoutes() {
                 <Route path="/AddItem" element={<ProtectedRoute adminOnly> <AddItem /> </ProtectedRoute>  } />
                 <Route path="/UpdateItem/:id" element={<UpdateItem />} />
 
+                <Route path="/Orders" element={<OrderList />} />
+
                 <Route path="/AddCategory" element={<ItemCategory />} />
                 <Route path="/Categories" element={<CategoryList />} />
                 <Route path="/UpdateCategory/:id" element={<UpdateCategory />} />
 
-                <Route path="/signUp" element={<SignUp />} />
-                <Route path="/login" element={<LogIn />} />
+                <Route path="/signUp" element={<GuestRoute> <SignUp /> </GuestRoute>} />
+                <Route path="/login" element={<GuestRoute> <LogIn /> </GuestRoute>} />
 
                 <Route path="/" element={<HomePage />} />
                 <Route path="/cart" element={<Cart />} />
