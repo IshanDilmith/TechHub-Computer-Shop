@@ -11,7 +11,7 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         try{
-            localStorage.removeItem('token');
+            
             document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     
             await axios.post('http://localhost:3000/auth/logout', {}, {

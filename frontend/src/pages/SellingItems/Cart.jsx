@@ -3,7 +3,7 @@ import { UserContext } from '../Components/UserContext';
 import { useContext } from 'react';
 import { totalItems } from '../Components/CartReducer';
 import { totalPrice } from '../Components/CartReducer';
-import { loadCartFromSessionStorage } from '../Components/CartReducer';
+import { loadCartFromLocalStorage } from '../Components/CartReducer';
 import Navbar from '../Components/Navbar/Navbar';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -44,7 +44,7 @@ const Cart = () => {
 
     useEffect(() => {
         if (userId && cart.length === 0) {
-            const savedCart = loadCartFromSessionStorage(userId);
+            const savedCart = loadCartFromLocalStorage(userId);
             if (savedCart.length > 0) {
                 savedCart.forEach(item => {
                     dispatch({

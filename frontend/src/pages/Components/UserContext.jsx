@@ -8,7 +8,7 @@ const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error] = useState(null);
-    const [cart, dispatch] = useReducer(cartReducer,[]);
+    const [cart, dispatch] = useReducer(cartReducer, []);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -31,7 +31,7 @@ const UserContextProvider = ({ children }) => {
     useEffect(() => {
         if (user?.userId) {
             const userId = user.userId;
-            const storedCart = sessionStorage.getItem(`cart_${userId}`);
+            const storedCart = localStorage.getItem(`cart_${userId}`);
             
             if (storedCart) {
                 dispatch({ type: 'Init', payload: JSON.parse(storedCart) });
@@ -40,7 +40,7 @@ const UserContextProvider = ({ children }) => {
     }, [user]);
 
     const isAdmin = () => user?.role === 'admin';
-    
+
     return (
         <UserContext.Provider value={{ user, setUser, loading, error, isAdmin, cart, dispatch }}>
             {children}
